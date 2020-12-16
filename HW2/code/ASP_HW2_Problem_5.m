@@ -48,14 +48,16 @@ disp('The average power of b1(n) is:');
 disp(Pb_1);
 
 % Problem 5 d
+n_iter = 10;
 Pf = [];
 Pb = [];
 x_forwards = x;
-x_backwards = x;
-n_iter = 10;
+% x_backwards = x;
+x_backwards = rshift(x, n_iter);
 for m = 1 : n_iter
     x_forwards = [x_forwards; rshift(x, m)];
-    x_backwards = [rshift(x, -m); x_backwards];
+    % x_backwards = [rshift(x, -m); x_backwards];
+    x_backwards = [rshift(x, n_iter-m); x_backwards];
 end
 for m = 1 : n_iter
     [a, P, kappa] = ASP_Levinson_Durbin(r(1:(m+1)));
@@ -64,7 +66,8 @@ for m = 1 : n_iter
     fM = a{m+1}'*x_forwards(1:m+1, :);
     Pf = [Pf fM*fM'/n];
     % backward error
-    bM = flip(a{m+1})'*x_backwards(end-m:end, :);
+    % bM = flip(a{m+1})'*x_backwards(end-m:end, :);
+    bM = flip(a{m+1})'*x_backwards(1:m+1, :);
     Pb = [Pb bM*bM'/n];
 end
 
